@@ -13,7 +13,15 @@
         body { margin: 0; background: radial-gradient(circle at center, #1a1a2e 0%, #020205 100%); color: white; font-family: 'Cairo', sans-serif; overflow-x: hidden; min-height: 100vh; }
         #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         #countdown-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        .timer-box { display: flex; gap: 15px; margin-top: 30px; }
+        
+        /* تعديل الترتيب: الأيام شمال والثواني يمين */
+        .timer-box { 
+            display: flex; 
+            flex-direction: row-reverse; /* دي اللي بتعكس الترتيب عشان الأيام تبقى شمال */
+            gap: 15px; 
+            margin-top: 30px; 
+        }
+
         .time-unit { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,215,0,0.3); padding: 15px; border-radius: 15px; min-width: 70px; }
         .time-unit span { display: block; font-size: 2rem; color: var(--primary); font-family: 'Reem Kufi', sans-serif; }
         #main-content { display: none; padding: 40px 20px; }
@@ -39,10 +47,10 @@
     <div id="countdown-screen">
         <h1 class="animate__animated animate__pulse animate__infinite">أجمل يوم لـ "شهودة" قرب ✨</h1>
         <div class="timer-box">
-            <div class="time-unit"><span id="days">00</span>أيام</div>
-            <div class="time-unit"><span id="hours">00</span>ساعة</div>
-            <div class="time-unit"><span id="mins">00</span>دقيقة</div>
-            <div class="time-unit"><span id="secs">00</span>ثانية</div>
+            <div class="time-unit" id="admin-trigger">أيام<span id="days">00</span></div>
+            <div class="time-unit">ساعة<span id="hours">00</span></div>
+            <div class="time-unit">دقيقة<span id="mins">00</span></div>
+            <div class="time-unit">ثانية<span id="secs">00</span></div>
         </div>
         <p style="margin-top: 25px; font-size: 1.2rem; color: #eee;">انتظري المفاجأة يا أغلى شهد..</p>
     </div>
@@ -58,14 +66,23 @@
     </div>
 
     <script>
-        const targetDate = "2026-06-16T00:00:00"; // موعد عيد ميلاد شهد
-        const songs = ["song1.mp3", "song2.mp3", "song3.mp3"]; // ارفع ملفاتك بهذه الأسماء
+        const targetDate = "2026-06-16T00:00:00"; 
+        const songs = ["song1.mp3", "song2.mp3", "song3.mp3"]; 
 
         const memories = [
             { img: "img1.jpg", question: "أول كلمة قولتها لك في شاتنا؟", options: ["أهلاً", "يا شهد", "إزيك"], correct: 1, message: "كنت متردد بس طلعت أحلى كلمة!" },
             { img: "img2.jpg", question: "أكتر أكلة بنحب نطلبها؟", options: ["شاورما", "برجر", "بيتزا"], correct: 0, message: "أحلى شاورما معاكي يا شهودة" },
-            // يمكنك إضافة المزيد هنا بنفس التنسيق
         ];
+
+        // ميزة المطور: اضغط 3 مرات على كلمة أيام عشان تفتح الموقع وتجربه
+        let clicks = 0;
+        document.getElementById('admin-trigger').onclick = () => {
+            clicks++;
+            if(clicks === 3) {
+                alert("أهلاً يا علي! جرب الموقع براحتك دلوقتي 😉");
+                showContent();
+            }
+        };
 
         async function checkTime() {
             try {
@@ -94,12 +111,13 @@
             document.getElementById('main-content').style.display = 'block';
             const audio = document.getElementById('bg-music');
             audio.src = songs[Math.floor(Math.random() * songs.length)];
-            audio.play().catch(() => console.log("User must interact first"));
+            audio.play().catch(() => console.log("User interaction required"));
             renderGrid();
         }
 
         function renderGrid() {
             const grid = document.getElementById('grid');
+            grid.innerHTML = ''; 
             memories.forEach((m, i) => {
                 const card = document.createElement('div');
                 card.className = 'memory-card locked animate__animated animate__fadeInUp';
@@ -131,7 +149,6 @@
             });
         }
 
-        // رسم النجوم
         const canvas = document.getElementById('stars-container');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
