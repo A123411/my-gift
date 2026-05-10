@@ -20,20 +20,17 @@
 
         #stars-container { position: fixed; inset: 0; z-index: -1; }
 
-        /* تعديل صفحة البداية لتكون أرقى */
         #countdown-screen { 
             display: flex; flex-direction: column; align-items: center; 
-            justify-content: flex-start; /* خليتها تبدأ من فوق شوية */
-            height: 100vh; text-align: center; 
-            padding-top: 15vh; /* رفعت الكلام لمكان أحسن */
+            justify-content: flex-start; height: 100vh; text-align: center; 
+            padding-top: 15vh; 
         }
 
         .hero-text { 
             font-size: 1.8rem; color: var(--gold); 
             text-shadow: 0 0 15px rgba(255,215,0,0.6);
             animation: pulseText 2.5s infinite ease-in-out; 
-            margin-bottom: 40px;
-            font-weight: 700;
+            margin-bottom: 40px; font-weight: 700;
         }
 
         @keyframes pulseText {
@@ -42,10 +39,8 @@
         }
 
         .timer-container {
-            position: relative;
-            padding: 20px;
-            border-radius: 30px;
-            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); /* هالة ذهبية */
+            position: relative; padding: 20px; border-radius: 30px;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
         }
 
         .timer-box { display: flex; flex-direction: row-reverse; gap: 12px; justify-content: center; }
@@ -53,19 +48,26 @@
         .time-unit { 
             background: var(--glass); border: 1px solid rgba(255,215,0,0.2); 
             padding: 12px; border-radius: 18px; width: 78px; 
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .time-unit span { display: block; font-size: 1.8rem; font-weight: bold; color: var(--gold); line-height: 1.2; }
         .label { font-size: 0.75rem; margin-bottom: 5px; color: #ccc; }
 
-        /* منطقة الذكريات */
-        #main-content { display: none; min-height: 100vh; padding: 40px 15px; position: relative; }
-        .scatter-container { 
-            display: flex; flex-wrap: wrap; justify-content: center; 
-            gap: 25px; padding-top: 20px; 
+        /* رسالة الخطأ المعدلة لتكون أرقى */
+        #custom-alert { 
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: rgba(139, 0, 0, 0.9); /* أحمر ملكي */
+            color: white; padding: 15px 30px; border-radius: 50px; 
+            z-index: 5000; font-weight: bold; text-align: center;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            font-size: 1rem;
         }
+
+        #main-content { display: none; min-height: 100vh; padding: 40px 15px; position: relative; }
+        .scatter-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding-top: 20px; }
 
         .memory-card { 
             width: 145px; height: 190px; background: white; padding: 6px;
@@ -74,17 +76,8 @@
         }
         .memory-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) blur(12px); }
         .memory-card.unlocked img { filter: none; }
-        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; z-index: 2; }
+        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; z-index: 2; color: #333;}
 
-        /* رسالة الخطأ */
-        #custom-alert { 
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); background: rgba(220, 20, 60, 0.95);
-            color: white; padding: 18px 28px; border-radius: 12px; 
-            z-index: 4000; font-weight: bold; box-shadow: 0 0 25px #ff0000;
-        }
-
-        /* المودال */
         #quiz-modal { 
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92);
             z-index: 2000; padding: 20px; align-items: center; justify-content: center;
@@ -98,7 +91,6 @@
             border: 1px solid var(--gold); background: rgba(255,215,0,0.05); color: white; font-size: 1rem;
         }
 
-        /* زرار النهاية */
         #final-overlay {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
             backdrop-filter: blur(10px); z-index: 3000; flex-direction: column;
@@ -115,12 +107,15 @@
 </head>
 <body>
 
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+
     <canvas id="stars-container"></canvas>
     <div id="custom-alert" class="animate__animated">حاولي تاني يا شهودة ❌</div>
 
     <div id="countdown-screen">
         <div class="hero-text animate__animated animate__fadeInDown">أجمل يوم لـ "شهودة" قرب ✨</div>
-        
         <div class="timer-container animate__animated animate__fadeIn">
             <div class="timer-box">
                 <div class="time-unit" id="admin-trigger"><div class="label">أيام</div><span id="days">00</span></div>
@@ -129,7 +124,6 @@
                 <div class="time-unit"><div class="label">ثانية</div><span id="secs">00</span></div>
             </div>
         </div>
-
         <div class="animate__animated animate__fadeInUp" style="margin-top: 40px;">
             <p style="opacity: 0.8; font-size: 1.1rem; color: #eee;">تجهزي للمفاجأة يا أغلى شهد..</p>
             <div style="color: var(--gold); font-size: 1.5rem; margin-top: 10px;">❤️</div>
@@ -143,7 +137,7 @@
 
     <div id="final-overlay">
         <h2 style="color: var(--gold); margin-bottom: 30px; padding: 0 20px;">خلصتي كل الذكريات! 🎈</h2>
-        <button class="final-btn" onclick="alert('اكتب هنا رسالتك الأخيرة لشهد')">اضغطي هنا يا أغلى شهد ✨</button>
+        <button class="final-btn" onclick="alert('بحبك يا أغلى شهد في الدنيا، كل سنة وانتي معايا!')">اضغطي هنا يا أغلى شهد ✨</button>
     </div>
 
     <div id="quiz-modal">
@@ -155,10 +149,15 @@
 
     <script>
         const targetDate = "2026-06-16T00:00:00";
+        
+        // ترتيب الأسئلة اللي طلبتها بالظبط
         const memories = [
-            { img: "img1.jpg", question: "أول كلمة قولتها لك في شاتنا؟", options: ["أهلاً", "يا شهد", "إزيك"], correct: 1 },
-            { img: "img2.jpg", question: "أكتر أكلة بنحب نطلبها؟", options: ["شاورما", "برجر", "بيتزا"], correct: 0 },
-            { img: "img3.jpg", question: "مين بيحب التاني أكتر؟", options: ["أنا", "انتي", "إحنا الاتنين"], correct: 2 },
+            { img: "IMAGE_URL_1", question: "لو وصفت حبي ليكي في كلمة واحدة تفتكري هختار إيه؟", options: ["أمان", "الجنة", "حياة"], correct: 0 },
+            { img: "IMAGE_URL_2", question: "أول هدية جبتها لك كانت إيه؟", options: ["ورد", "شوكولاتة وبوكس رمضان", "تورتة أو كيكة"], correct: 1 },
+            { img: "IMAGE_URL_3", question: "لو ربنا رزقنا ببنوتة قمر زيك تحبي نسميها إيه؟", options: ["حور", "مسك", "شهد"], correct: 2 },
+            { img: "IMAGE_URL_4", question: "تفتكري التاريخ اللي دبستني فيه بحبك كان يوم كام بالظبط؟", options: ["11-2", "19-2", "21-2"], correct: 1 },
+            { img: "IMAGE_URL_5", question: "مين أكتر واحد بيحب التاني في المجرة دي؟", options: ["أنا طبعاً", "إنتي", "إحنا الاتنين سوا"], correct: 2 },
+            { img: "IMAGE_URL_6", question: "إيه أكتر أكلة بنحب نأكلها مع بعض؟", options: ["بازوكا", "بريم (Primer)", "رشدي"], correct: 2 } // صورة الأكل الأخيرة
         ];
 
         let unlockedCount = 0;
@@ -168,8 +167,13 @@
         function showError() {
             const alertBox = document.getElementById('custom-alert');
             alertBox.style.display = 'block';
-            alertBox.classList.add('animate__shakeX');
-            setTimeout(() => { alertBox.style.display = 'none'; alertBox.classList.remove('animate__shakeX'); }, 2000);
+            alertBox.classList.remove('animate__fadeOut');
+            alertBox.classList.add('animate__fadeIn', 'animate__shakeX');
+            setTimeout(() => {
+                alertBox.classList.remove('animate__fadeIn', 'animate__shakeX');
+                alertBox.classList.add('animate__fadeOut');
+                setTimeout(() => { alertBox.style.display = 'none'; }, 500);
+            }, 1500);
         }
 
         async function checkTime() {
@@ -185,6 +189,7 @@
             if (diff <= 0) return showContent();
             setInterval(() => {
                 diff -= 1000;
+                if (diff <= 0) { location.reload(); return; }
                 document.getElementById('days').innerText = Math.floor(diff / 86400000).toString().padStart(2, '0');
                 document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000).toString().padStart(2, '0');
                 document.getElementById('mins').innerText = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
@@ -195,6 +200,7 @@
         function showContent() {
             document.getElementById('countdown-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            document.getElementById('bg-music').play(); // تشغيل الأغنية عند الفتح
             renderGrid();
         }
 
@@ -254,4 +260,3 @@
     </script>
 </body>
 </html>
-
