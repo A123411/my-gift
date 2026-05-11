@@ -83,7 +83,7 @@
         
         const memories = [
             { img: "70c4b6df-e946-4b53-b2e2-b5b44d194991.jpg", question: "لو وصفت حبي ليكي في كلمة واحدة تفتكري هختار إيه؟", options: ["أمان", "الجنة", "حياة"], correct: 0 },
-            { img: "b02711a2-59c4-4af8-bfe2-c4c2930a63a4.jpg", question: "تفتكري القمر كان منور لمين في اليوم ده؟", options: ["لينا", "للكل", "ليكي لوحدك"], correct: 0 },
+            { img: "b02711a2-59c4-4af8-bfe2-c4c2930a63a4.jpg", question: "أول هدية جبتها لك كانت إيه؟", options: ["ورد", "شوكولاتة وبوكس رمضان", "تورتة أو كيكة"], correct: 1 },
             { img: "be919d10-769a-4a1c-a055-987ab036a261.jpg", question: "لو ربنا رزقنا ببنوتة قمر زيك تحبي نسميها إيه؟", options: ["حور", "مسك", "شهد"], correct: 2 },
             { img: "d6dd22c6-a103-4b3e-990d-83069404dec5.jpg", question: "تفتكري التاريخ اللي دبستني فيه بحبك كان يوم كام بالظبط؟", options: ["11-2", "19-2", "21-2"], correct: 1 },
             { img: "edfb60ca-651e-4783-93f0-bc77456d73dc.jpg", question: "مين أكتر واحد بيحب التاني في المجرة دي؟", options: ["أنا طبعاً", "إنتي", "إحنا الاتنين سوا"], correct: 2 },
@@ -92,7 +92,11 @@
 
         let unlockedCount = 0;
         let adminClicks = 0;
-        document.getElementById('admin-trigger').onclick = () => { if(++adminClicks === 3) showContent(); };
+        
+        // زر سري للمسئول (اضغط على كلمة أيام 3 مرات للدخول قبل الموعد)
+        document.getElementById('admin-trigger').onclick = () => { 
+            if(++adminClicks === 3) showContent(); 
+        };
 
         function showError() {
             const alertBox = document.getElementById('custom-alert');
@@ -139,6 +143,7 @@
 
         function renderGrid() {
             const grid = document.getElementById('grid');
+            grid.innerHTML = '';
             memories.forEach((m, i) => {
                 const card = document.createElement('div');
                 card.className = 'memory-card animate__animated animate__zoomIn';
