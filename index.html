@@ -10,21 +10,12 @@
     
     <style>
         :root { --gold: #ffd700; --glass: rgba(255, 255, 255, 0.08); }
-        
-        /* تثبيت الشاشة ومنع الحركة الغلط */
-        * { 
-            touch-action: pan-y; 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none;
-        }
+        * { touch-action: pan-y; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         
         body { 
             margin: 0; background: #02020a; color: white; 
-            font-family: 'Cairo', sans-serif; 
-            overflow: hidden; /* منع السكرول الجانبي والزووم */
-            width: 100vw; height: 100vh;
-            position: fixed; /* زيادة تأكيد لثبات الشاشة */
+            font-family: 'Cairo', sans-serif; overflow: hidden;
+            width: 100vw; height: 100vh; position: fixed;
         }
 
         #stars-container { position: fixed; inset: 0; z-index: -1; }
@@ -78,15 +69,15 @@
         .memory-card.unlocked img { filter: none; }
         .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; z-index: 2; color: #333; }
 
-        /* رسالة الخطأ في النص بالملي */
+        /* رسالة الخطأ ثابتة في المنتصف */
         #custom-alert { 
             display: none; position: fixed; 
             top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background: rgba(200, 0, 0, 0.95);
+            background: rgba(220, 0, 0, 0.95);
             color: white; padding: 15px 30px; border-radius: 50px; 
             z-index: 9999; font-weight: bold; text-align: center;
-            box-shadow: 0 0 30px rgba(255,0,0,0.6);
-            border: 2px solid #ff4d4d; min-width: 250px;
+            box-shadow: 0 0 35px rgba(255,0,0,0.5);
+            border: 2px solid #ff4d4d; min-width: 260px;
         }
 
         #quiz-modal { 
@@ -102,20 +93,34 @@
             border: 1px solid var(--gold); background: rgba(255,215,0,0.05); color: white; font-size: 1rem;
         }
 
+        /* رياكشن "بصي من البلكونة" */
         #final-overlay {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(15px); z-index: 3000; flex-direction: column;
+            backdrop-filter: blur(20px); z-index: 3000; flex-direction: column;
             align-items: center; justify-content: center; text-align: center;
         }
-        .final-msg {
-            font-size: 2rem; font-weight: bold; color: var(--gold);
-            text-shadow: 0 0 20px rgba(255,215,0,0.5);
-            animation: bounceIn 1s;
+        .heart-icon { font-size: 5rem; animation: heartBeat 1.2s infinite; display: block; margin-bottom: 20px; }
+        .final-msg { 
+            font-size: 2.2rem; color: var(--gold); font-weight: 700;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+            animation: glowText 2s infinite alternate;
+        }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.25); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        @keyframes glowText {
+            from { opacity: 0.8; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1.05); }
         }
     </style>
 </head>
 <body>
 
+    <audio id="loveMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
     <canvas id="stars-container"></canvas>
     <div id="custom-alert">حاولي تاني يا شهودة ❌</div>
 
@@ -141,11 +146,9 @@
     </div>
 
     <div id="final-overlay">
-        <div class="animate__animated animate__jackInTheBox">
-            <div style="font-size: 4rem; margin-bottom: 20px;">🎈❤️</div>
-            <h2 class="final-msg">بصي من البلكونة يا شهودة! ❤️</h2>
-            <p style="color: white; margin-top: 15px; font-size: 1.2rem; opacity: 0.9;">كل سنة وانتي منورة حياتي ✨</p>
-        </div>
+        <span class="heart-icon">🎈❤️</span>
+        <h2 class="final-msg">بصي من البلكونة يا شهودة!</h2>
+        <p style="color: white; margin-top: 20px; font-size: 1.3rem; opacity: 0.9; font-weight: 400;">كل سنة وانتي منورة حياتي ✨</p>
     </div>
 
     <div id="quiz-modal">
@@ -199,6 +202,9 @@
         function showContent() {
             document.getElementById('countdown-screen').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            document.getElementById('loveMusic').play().catch(() => {
+                 window.addEventListener('click', () => document.getElementById('loveMusic').play(), {once: true});
+            });
             renderGrid();
         }
 
@@ -235,7 +241,7 @@
                         unlockedCount++;
                         if(unlockedCount === memories.length) setTimeout(() => {
                             document.getElementById('final-overlay').style.display = 'flex';
-                            var end = Date.now() + 5000;
+                            var end = Date.now() + 6000;
                             (function f() { confetti({particleCount:3, angle:60, spread:55, origin:{x:0}}); confetti({particleCount:3, angle:120, spread:55, origin:{x:1}}); if(Date.now()<end) requestAnimationFrame(f); })();
                         }, 1000);
                     } else showError();
