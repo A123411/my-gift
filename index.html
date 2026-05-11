@@ -14,32 +14,41 @@
         body { margin: 0; background: #02020a; color: white; font-family: 'Cairo', sans-serif; overflow-x: hidden; width: 100vw; height: 100vh; }
         #stars-container { position: fixed; inset: 0; z-index: -1; }
         
-        /* العداد */
+        /* العداد - الديزاين الأصلي */
         #countdown-screen { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100vh; text-align: center; padding-top: 15vh; }
-        .hero-text { font-size: 1.8rem; color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.6); animation: pulseText 2.5s infinite; margin-bottom: 40px; font-weight: 700; }
-        .time-unit { background: var(--glass); border: 1px solid rgba(255,215,0,0.2); padding: 12px; border-radius: 18px; width: 78px; backdrop-filter: blur(8px); }
-        .time-unit span { display: block; font-size: 1.8rem; font-weight: bold; color: var(--gold); }
-
-        /* الكروت */
+        .hero-text { font-size: 1.8rem; color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.6); animation: pulseText 2.5s infinite ease-in-out; margin-bottom: 40px; font-weight: 700; }
+        @keyframes pulseText { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.3); } }
+        .timer-container { position: relative; padding: 20px; border-radius: 30px; background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); }
+        .timer-box { display: flex; flex-direction: row-reverse; gap: 12px; justify-content: center; }
+        .time-unit { background: var(--glass); border: 1px solid rgba(255,215,0,0.2); padding: 12px; border-radius: 18px; width: 78px; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .time-unit span { display: block; font-size: 1.8rem; font-weight: bold; color: var(--gold); line-height: 1.2; }
+        .label { font-size: 0.75rem; margin-bottom: 5px; color: #ccc; }
+        #custom-alert { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(139, 0, 0, 0.9); color: white; padding: 15px 30px; border-radius: 50px; z-index: 5000; font-weight: bold; text-align: center; border: 1px solid var(--gold); box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 1rem; }
+        
+        /* المحتوى - الديزاين الأصلي مبعثر */
         #main-content { display: none; min-height: 100vh; padding: 40px 15px; position: relative; }
-        .scatter-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; }
-        .memory-card { width: 145px; height: 190px; background: white; padding: 6px; border-radius: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); cursor: pointer; position: relative; }
+        .scatter-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding-top: 20px; }
+        .memory-card { width: 145px; height: 190px; background: white; padding: 6px; border-radius: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); cursor: pointer; transition: 0.4s; position: relative; }
         .memory-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) blur(12px); }
         .memory-card.unlocked img { filter: none; transition: 0.5s; }
-        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; color: #333;}
-
-        /* الرسالة النهائية الجامدة */
-        #final-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .surprise-box { padding: 30px; border: 2px solid var(--gold); border-radius: 30px; background: rgba(255,215,0,0.05); box-shadow: 0 0 50px rgba(255,215,0,0.2); max-width: 90%; }
-        .final-msg { font-size: 2rem; color: var(--gold); margin-bottom: 20px; font-weight: bold; display: block; }
-        .action-msg { font-size: 2.5rem; color: #fff; text-shadow: 0 0 20px #ffd700; animation: bounceInDown 1s; }
+        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; z-index: 2; color: #333;}
         
-        /* زر النهاية */
-        .final-btn { background: linear-gradient(135deg, #ffd700, #b8860b); color: black; border: none; padding: 20px 40px; font-size: 1.4rem; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 30px var(--gold); }
+        /* المفاجأة الكبرى - تعديل النزول ببطء وانيميشن احترافي */
+        #final-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .surprise-box { padding: 40px; border: 2px solid var(--gold); border-radius: 30px; background: rgba(0,0,0,0.8); box-shadow: 0 0 50px rgba(255,215,0,0.3); max-width: 90%; }
+        .final-msg { font-size: 1.8rem; color: var(--gold); margin-bottom: 25px; font-weight: bold; display: block; }
+        .action-msg { font-size: 2.8rem; color: #fff; text-shadow: 0 0 25px #ffd700; font-weight: 700; animation: heartBeat 1.5s infinite; }
+        
+        /* انيميشن مخصص للنزول ببطء شديد واحترافية */
+        .animate__slowDownIn { animation-name: slowDownIn; animation-duration: 3s; animation-timing-function: ease-out; }
+        @keyframes slowDownIn { from { opacity: 0; transform: translate3d(0, -200px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
 
+        /* المودال - الديزاين الأصلي الأبيض */
         #quiz-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 2000; padding: 20px; align-items: center; justify-content: center; }
-        .modal-box { background: #0a0a15; border: 1px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 340px; text-align: center; }
-        .option-btn { width: 100%; padding: 14px; margin: 10px 0; border-radius: 15px; border: 1px solid var(--gold); background: rgba(255,215,0,0.05); color: white; font-size: 1rem; }
+        .modal-box { background: white; border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 340px; text-align: center; color: black; box-shadow: 0 0 30px rgba(255,215,0,0.4); }
+        .modal-box h3 { color: black; margin-bottom: 20px; font-weight: 700; }
+        .option-btn { width: 100%; padding: 14px; margin: 10px 0; border-radius: 15px; border: 2px solid #ddd; background: #f9f9f9; color: black; font-size: 1rem; font-weight: bold; transition: 0.3s; }
+        .option-btn:active { background: #eee; transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -49,133 +58,17 @@
     </audio>
 
     <canvas id="stars-container"></canvas>
+    <div id="custom-alert" class="animate__animated">حاولي تاني يا شهودة ❌</div>
 
     <div id="countdown-screen">
         <div class="hero-text animate__animated animate__fadeInDown">أجمل يوم لـ "شهودة" قرب ✨</div>
-        <div class="timer-container">
-            <div style="display: flex; gap: 10px; justify-content: center; flex-direction: row-reverse;">
-                <div class="time-unit" id="admin-trigger"><span>00</span><small>يوم</small></div>
-                <div class="time-unit"><span id="hours">00</span><small>ساعة</small></div>
-                <div class="time-unit"><span id="mins">00</span><small>دقيقة</small></div>
-                <div class="time-unit"><span id="secs">00</span><small>ثانية</small></div>
+        <div class="timer-container animate__animated animate__fadeIn">
+            <div class="timer-box">
+                <div class="time-unit" id="admin-trigger"><div class="label">أيام</div><span id="days">00</span></div>
+                <div class="time-unit"><div class="label">ساعة</div><span id="hours">00</span></div>
+                <div class="time-unit"><div class="label">دقيقة</div><span id="mins">00</span></div>
+                <div class="time-unit"><div class="label">ثانية</div><span id="secs">00</span></div>
             </div>
         </div>
-    </div>
-
-    <div id="main-content">
-        <h2 style="color: var(--gold); text-align: center; margin-bottom: 40px;">ذكرياتنا يا شهودة ❤️</h2>
-        <div class="scatter-container" id="grid"></div>
-    </div>
-
-    <div id="final-overlay">
-        <div class="surprise-box animate__animated animate__zoomInDown">
-            <span class="final-msg">خلصتي كل الذكريات يا قلبي! ❤️</span>
-            <div class="action-msg animate__animated animate__heartBeat animate__infinite">بصي من البلكونة يا شهودة! 🎈</div>
-            <p style="margin-top: 20px; color: #aaa;">كل سنة وانتي منورة حياتي</p>
-        </div>
-    </div>
-
-    <div id="quiz-modal">
-        <div class="modal-box animate__animated animate__zoomIn">
-            <h3 id="question-text">السؤال؟</h3>
-            <div id="options-container"></div>
-        </div>
-    </div>
-
-    <script>
-        const targetDate = "2026-06-16T00:00:00";
-        const memories = [
-            { img: "70c4b6df-e946-4b53-b2e2-b5b44d194991.jpg", question: "لو وصفت حبي ليكي في كلمة واحدة تفتكري هختار إيه؟", options: ["أمان", "الجنة", "حياة"], correct: 0 },
-            { img: "b02711a2-59c4-4af8-bfe2-c4c2930a63a4.jpg", question: "أول هدية جبتها لك كانت إيه؟", options: ["ورد", "بوكس رمضان", "تورتة"], correct: 1 },
-            { img: "be919d10-769a-4a1c-a055-987ab036a261.jpg", question: "لو ربنا رزقنا ببنوتة قمر زيك تحبي نسميها إيه؟", options: ["حور", "مسك", "شهد"], correct: 2 },
-            { img: "d6dd22c6-a103-4b3e-990d-83069404dec5.jpg", question: "تفتكري التاريخ اللي حبيتك فيه كان يوم كام؟", options: ["11-2", "19-2", "21-2"], correct: 1 },
-            { img: "edfb60ca-651e-4783-93f0-bc77456d73dc.jpg", question: "مين أكتر واحد بيحب التاني في الدنيا دي؟", options: ["أنا", "إنتي", "إحنا الاتنين"], correct: 2 },
-            { img: "d7fdcd09-93e8-48df-a88d-49cab8e4329a.jpg", question: "إيه أكتر أكلة بنحب نأكلها مع بعض؟", options: ["بازوكا", "بيتزا", "رشدي"], correct: 2 }
-        ];
-
-        let unlockedCount = 0;
-        let adminClicks = 0;
-        document.getElementById('admin-trigger').onclick = () => { if(++adminClicks === 3) showContent(); };
-
-        function startCountdown() {
-            setInterval(() => {
-                const diff = new Date(targetDate) - new Date();
-                if (diff <= 0) return showContent();
-                document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000).toString().padStart(2, '0');
-                document.getElementById('mins').innerText = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-                document.getElementById('secs').innerText = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-            }, 1000);
-        }
-
-        function showContent() {
-            document.getElementById('countdown-screen').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            document.getElementById('bg-music').play().catch(() => {
-                document.addEventListener('click', () => document.getElementById('bg-music').play(), {once: true});
-            });
-            renderGrid();
-        }
-
-        function renderGrid() {
-            const grid = document.getElementById('grid');
-            memories.forEach((m, i) => {
-                const card = document.createElement('div');
-                card.className = 'memory-card animate__animated animate__fadeIn';
-                card.innerHTML = `<img src="${m.img}"><div class="lock-icon" id="lock-${i}">🔒</div>`;
-                card.onclick = () => openQuiz(i, card);
-                grid.appendChild(card);
-            });
-        }
-
-        function openQuiz(i, card) {
-            if (card.classList.contains('unlocked')) return;
-            document.getElementById('quiz-modal').style.display = 'flex';
-            document.getElementById('question-text').innerText = memories[i].question;
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            memories[i].options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    if (idx === memories[i].correct) {
-                        card.classList.add('unlocked');
-                        document.getElementById(`lock-${i}`).style.display = 'none';
-                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                        document.getElementById('quiz-modal').style.display = 'none';
-                        unlockedCount++;
-                        if(unlockedCount === memories.length) setTimeout(showFinalSurprise, 1500);
-                    } else {
-                        alert("حاولي تاني يا روحي! ❤️");
-                    }
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function showFinalSurprise() {
-            document.getElementById('final-overlay').style.display = 'flex';
-            // ضرب نار confetti مستمر
-            var end = Date.now() + (15 * 1000);
-            (function frame() {
-                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
-        }
-
-        startCountdown();
-        // رسم النجوم
-        const canvas = document.getElementById('stars-container');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let stars = Array(100).fill().map(() => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, v: Math.random() * 0.5 }));
-        function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "white";
-            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, 1, 0, 7); ctx.fill(); s.y += s.v; if (s.y > canvas.height) s.y = 0; });
-            requestAnimationFrame(draw);
-        }
-        draw();
-    </script>
-</body>
-</html>
+        <div class="animate__animated animate__fadeInUp" style="margin-top: 40px;">
+            <p style="opacity: 0.8; font-size: 1.1rem; color: #eee;">تجهزي للمفاجأة يا أغلى شهدhttp://googleusercontent.com/generated_image_content/0
