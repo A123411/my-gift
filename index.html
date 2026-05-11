@@ -10,20 +10,28 @@
     
     <style>
         :root { --gold: #ffd700; --glass: rgba(255, 255, 255, 0.08); }
-        * { touch-action: manipulation; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        /* تثبيت الشاشة ومنع الحركة الغلط */
+        * { 
+            touch-action: pan-y; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
         
         body { 
             margin: 0; background: #02020a; color: white; 
-            font-family: 'Cairo', sans-serif; overflow-x: hidden;
+            font-family: 'Cairo', sans-serif; 
+            overflow: hidden; /* منع السكرول الجانبي والزووم */
             width: 100vw; height: 100vh;
+            position: fixed; /* زيادة تأكيد لثبات الشاشة */
         }
 
         #stars-container { position: fixed; inset: 0; z-index: -1; }
 
         #countdown-screen { 
             display: flex; flex-direction: column; align-items: center; 
-            justify-content: flex-start; 
-            height: 100vh; text-align: center; 
+            justify-content: flex-start; height: 100vh; text-align: center; 
             padding-top: 15vh; 
         }
 
@@ -31,8 +39,7 @@
             font-size: 1.8rem; color: var(--gold); 
             text-shadow: 0 0 15px rgba(255,215,0,0.6);
             animation: pulseText 2.5s infinite ease-in-out; 
-            margin-bottom: 40px;
-            font-weight: 700;
+            margin-bottom: 40px; font-weight: 700;
         }
 
         @keyframes pulseText {
@@ -41,9 +48,7 @@
         }
 
         .timer-container {
-            position: relative;
-            padding: 20px;
-            border-radius: 30px;
+            position: relative; padding: 20px; border-radius: 30px;
             background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%); 
         }
 
@@ -52,21 +57,20 @@
         .time-unit { 
             background: var(--glass); border: 1px solid rgba(255,215,0,0.2); 
             padding: 12px; border-radius: 18px; width: 78px; 
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .time-unit span { display: block; font-size: 1.8rem; font-weight: bold; color: var(--gold); line-height: 1.2; }
         .label { font-size: 0.75rem; margin-bottom: 5px; color: #ccc; }
 
-        #main-content { display: none; min-height: 100vh; padding: 40px 15px; position: relative; }
-        .scatter-container { 
-            display: flex; flex-wrap: wrap; justify-content: center; 
-            gap: 25px; padding-top: 20px; 
+        #main-content { 
+            display: none; height: 100vh; width: 100vw; 
+            padding: 40px 15px; position: relative; overflow-y: auto; 
         }
+        .scatter-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding-bottom: 50px; }
 
         .memory-card { 
-            width: 145px; height: 190px; background: white; padding: 6px;
+            width: 140px; height: 180px; background: white; padding: 6px;
             border-radius: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.6);
             cursor: pointer; transition: 0.4s; position: relative;
         }
@@ -74,16 +78,15 @@
         .memory-card.unlocked img { filter: none; }
         .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.8rem; z-index: 2; color: #333; }
 
-        /* تعديل شكل رسالة الخطأ لتكون في المنتصف تماماً وشكلها أرقى */
+        /* رسالة الخطأ في النص بالملي */
         #custom-alert { 
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            background: rgba(180, 0, 0, 0.9);
+            display: none; position: fixed; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: rgba(200, 0, 0, 0.95);
             color: white; padding: 15px 30px; border-radius: 50px; 
-            z-index: 5000; font-weight: bold; text-align: center;
-            box-shadow: 0 0 20px rgba(255,0,0,0.4);
-            border: 1px solid #ff4d4d;
-            min-width: 200px;
+            z-index: 9999; font-weight: bold; text-align: center;
+            box-shadow: 0 0 30px rgba(255,0,0,0.6);
+            border: 2px solid #ff4d4d; min-width: 250px;
         }
 
         #quiz-modal { 
@@ -99,28 +102,26 @@
             border: 1px solid var(--gold); background: rgba(255,215,0,0.05); color: white; font-size: 1rem;
         }
 
-        /* شاشة الاحتفال النهائي */
         #final-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             backdrop-filter: blur(15px); z-index: 3000; flex-direction: column;
             align-items: center; justify-content: center; text-align: center;
         }
         .final-msg {
-            font-size: 2.2rem; font-weight: bold; color: var(--gold);
+            font-size: 2rem; font-weight: bold; color: var(--gold);
             text-shadow: 0 0 20px rgba(255,215,0,0.5);
-            animation: zoomInHeart 1s infinite alternate;
+            animation: bounceIn 1s;
         }
-        @keyframes zoomInHeart { from { transform: scale(1); } to { transform: scale(1.1); } }
     </style>
 </head>
 <body>
 
     <canvas id="stars-container"></canvas>
-    <div id="custom-alert" class="animate__animated">حاولي تاني يا شهودة ❌</div>
+    <div id="custom-alert">حاولي تاني يا شهودة ❌</div>
 
     <div id="countdown-screen">
         <div class="hero-text animate__animated animate__fadeInDown">أجمل يوم لـ "شهودة" قرب ✨</div>
-        <div class="timer-container animate__animated animate__fadeIn">
+        <div class="timer-container">
             <div class="timer-box">
                 <div class="time-unit" id="admin-trigger"><div class="label">أيام</div><span id="days">00</span></div>
                 <div class="time-unit"><div class="label">ساعة</div><span id="hours">00</span></div>
@@ -128,7 +129,7 @@
                 <div class="time-unit"><div class="label">ثانية</div><span id="secs">00</span></div>
             </div>
         </div>
-        <div class="animate__animated animate__fadeInUp" style="margin-top: 40px;">
+        <div style="margin-top: 40px;">
             <p style="opacity: 0.8; font-size: 1.1rem; color: #eee;">تجهزي للمفاجأة يا أغلى شهد..</p>
             <div style="color: var(--gold); font-size: 1.5rem; margin-top: 10px;">❤️</div>
         </div>
@@ -172,8 +173,7 @@
         function showError() {
             const alertBox = document.getElementById('custom-alert');
             alertBox.style.display = 'block';
-            alertBox.className = 'animate__animated animate__bounceIn';
-            setTimeout(() => { alertBox.classList.replace('animate__bounceIn', 'animate__fadeOut'); setTimeout(() => { alertBox.style.display = 'none'; alertBox.classList.remove('animate__fadeOut'); }, 500); }, 2000);
+            setTimeout(() => { alertBox.style.display = 'none'; }, 2000);
         }
 
         async function checkTime() {
@@ -189,7 +189,6 @@
             if (diff <= 0) return showContent();
             setInterval(() => {
                 diff -= 1000;
-                if (diff <= 0) { location.reload(); return; }
                 document.getElementById('days').innerText = Math.floor(diff / 86400000).toString().padStart(2, '0');
                 document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000).toString().padStart(2, '0');
                 document.getElementById('mins').innerText = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
@@ -234,24 +233,15 @@
                         confetti({ particleCount: 100, spread: 60, origin: { y: 0.8 } });
                         modal.style.display = 'none';
                         unlockedCount++;
-                        if(unlockedCount === memories.length) setTimeout(showFinalCelebration, 1000);
+                        if(unlockedCount === memories.length) setTimeout(() => {
+                            document.getElementById('final-overlay').style.display = 'flex';
+                            var end = Date.now() + 5000;
+                            (function f() { confetti({particleCount:3, angle:60, spread:55, origin:{x:0}}); confetti({particleCount:3, angle:120, spread:55, origin:{x:1}}); if(Date.now()<end) requestAnimationFrame(f); })();
+                        }, 1000);
                     } else showError();
                 };
                 container.appendChild(btn);
             });
-        }
-
-        function showFinalCelebration() {
-            document.body.style.overflow = 'hidden';
-            document.getElementById('final-overlay').style.display = 'flex';
-            
-            // احتفال مستمر لمدة 5 ثواني
-            var end = Date.now() + (5 * 1000);
-            (function frame() {
-                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
         }
 
         const canvas = document.getElementById('stars-container');
